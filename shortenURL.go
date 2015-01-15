@@ -32,6 +32,8 @@ func main() {
 	fmt.Println(m.Id)
 }
 
+// curl https://www.googleapis.com/urlshortener/v1/url -H 'Content-Type: application/json' -d '{"longUrl": "http://www.google.com/"}'
+
 /*
 {
  "kind": "urlshortener#url",
@@ -40,4 +42,3 @@ func main() {
 }
 */
 
-// curl https://www.googleapis.com/urlshortener/v1/url -H 'Content-Type: application/json' -d '{"longUrl": "http://www.google.com/"}'
