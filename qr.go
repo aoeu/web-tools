@@ -20,8 +20,16 @@ func main() {
 	}
 }
 
+type QRParams struct {
+	Url, Dimensions string
+}
+
 func QR(w http.ResponseWriter, req *http.Request) {
-	templ.Execute(w, req.FormValue("s"))
+	templ.Execute(w,
+		QRParams{
+			Url:        req.FormValue("url"),
+			Dimensions: req.FormValue("dimensions"),
+		})
 }
 
 const templateStr = `
@@ -32,12 +40,17 @@ const templateStr = `
 <body>
 <br>
 <br>
-<form action="/" name=f method="GET"><input maxLength=1024 size=70 name=s value="" title="Text to QR Encode"><input type=submit value="Show QR" name=qr>
+<form action="/" name=f method="GET"><input maxLength=1024 size=70 name=url value="" title="Text to QR Encode"><input type=submit value="Show QR" name=qr>
+<select name=dimensions>
+<option value="100x100">Small</option>
+<option value="300x300">Medium</option>
+<option value="500x500">Large</option>
+</select>
 </form>
-{{if .}}
-<img src="http://chart.apis.google.com/chart?chs=300x300&cht=qr&choe=UTF-8&chl={{.}}" />
+{{if .Url}}
+<a href="{{.Url}}">{{.Url}}</a>
 <br>
-<a href="{{.}}">{{.}}</a>
+<img src="http://chart.apis.google.com/chart?chs={{.Dimensions}}&cht=qr&choe=UTF-8&chl={{.Url}}" />
 {{end}}
 </body>
 </html>
