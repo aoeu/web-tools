@@ -43,7 +43,7 @@ const templateStr = `
 <form action="/" name=f method="GET"><input maxLength=1024 size=70 name=url value="" title="Text to QR Encode"><input type=submit value="Show QR" name=qr>
 <select name=dimensions>
 <option value="100x100">Small</option>
-<option value="300x300">Medium</option>
+<option value="300x300" selected="selected">Medium</option>
 <option value="500x500">Large</option>
 </select>
 </form>
