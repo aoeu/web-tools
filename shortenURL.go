@@ -1,21 +1,25 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
-	"encoding/json"
 )
 
 // TODO: Is there an idiom for naming variable comprised entirely of acronyms?
 var APIURL = "https://www.googleapis.com/urlshortener/v1/url"
-var longURL = flag.String("url", "", "A URL to shorten.")
+var userProvidedURL = flag.String("url", "", "A URL to shorten.")
 
-func main() {
-	flag.Parse()
-	payload := strings.NewReader(`{"longUrl": "` + *longURL + `"}`)
+func shortenURL(longURL string) (shortURL string, err error) {
+	_, err = url.Parse(longURL)
+	if err != nil {
+		return
+	}
+	payload := strings.NewReader(`{"longUrl": "` + longURL + `"}`)
 	resp, err := http.Post(APIURL, "application/json", payload)
 	if err != nil {
 		log.Fatal(err)
@@ -26,10 +30,18 @@ func main() {
 	}
 	dec := json.NewDecoder(resp.Body)
 	var m Message
-	if err := dec.Decode(&m); err != nil {
+	err = dec.Decode(&m)
+	shortURL = m.Id
+	return
+}
+
+func main() {
+	flag.Parse()
+	shortURL, err := shortenURL(*userProvidedURL)
+	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(m.Id)
+	fmt.Println(shortURL)
 }
 
 // curl https://www.googleapis.com/urlshortener/v1/url -H 'Content-Type: application/json' -d '{"longUrl": "http://www.google.com/"}'
@@ -41,4 +53,3 @@ func main() {
  "longUrl": "http://www.google.com/"
 }
 */
-
