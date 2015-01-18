@@ -15,7 +15,7 @@ var APIURL = "https://www.googleapis.com/urlshortener/v1/url"
 var userProvidedURL = flag.String("url", "", "A URL to shorten.")
 
 func shortenURL(longURL string) (shortURL string, err error) {
-	_, err = url.Parse(longURL)
+	_, err = url.ParseRequestURI(longURL)
 	if err != nil {
 		return
 	}
@@ -36,6 +36,7 @@ func shortenURL(longURL string) (shortURL string, err error) {
 }
 
 func main() {
+	log.SetFlags(0)
 	flag.Parse()
 	shortURL, err := shortenURL(*userProvidedURL)
 	if err != nil {
