@@ -10,7 +10,6 @@ import (
 	"strings"
 )
 
-// TODO: Is there an idiom for naming variable comprised entirely of acronyms?
 var APIURL = "https://www.googleapis.com/urlshortener/v1/url"
 var userProvidedURL = flag.String("url", "", "A URL to shorten.")
 
