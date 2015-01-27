@@ -1,5 +1,8 @@
 package main
 
+// Going through https://golang.org/doc/articles/wiki/ LTHW style.
+// TOOD: resume at /handle errors in renderTemplate/
+
 import (
 	"fmt"
 	"io/ioutil"
