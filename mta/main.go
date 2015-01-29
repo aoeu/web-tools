@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/xml"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
-	"io/ioutil"
-	"fmt"
 )
 
 type Service struct {
@@ -45,10 +45,11 @@ func main() {
 			bodyBytes = append(bodyBytes, rune)
 		}
 	}
-
 	err = xml.Unmarshal(bodyBytes, &service)
 	if err != nil {
 		log.Fatalf("Error unmarshaling XML data: %v", err)
 	}
-	log.Println(service)
+	for _, line := range service.Subway.Line {
+		fmt.Printf("%5s : %-20s\n", line.Name, line.Status)
+	}
 }
