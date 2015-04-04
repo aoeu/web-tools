@@ -2,13 +2,12 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"os"
 )
-
 
 // "Echo" the HTTP headers and payload of the HTTP request in the response.
 func main() {
@@ -17,12 +16,11 @@ func main() {
 	flag.Parse()
 	http.HandleFunc(*url, func(w http.ResponseWriter, r *http.Request) {
 		m := io.MultiWriter(os.Stdout, w)
-		defer r.Body.Close()
-		log.Println("Received request:")
-		for key, value := range r.Header {
-			fmt.Fprintf(m, "%v : %v\n", key, value)
+		b, err := httputil.DumpRequest(r, true)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		_, err := io.Copy(m, r.Body)
+		_, err = m.Write(b)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
