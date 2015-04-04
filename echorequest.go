@@ -10,28 +10,6 @@ import (
 	"os"
 )
 
-type multiWriter struct {
-	writers []io.Writer
-}
-
-func newMultiWriter(writers ...io.Writer) *multiWriter {
-	m := &multiWriter{writers: make([]io.Writer, len(writers))}
-	for i, w := range writers {
-		m.writers[i] = w
-	}
-	return m
-}
-
-func (m *multiWriter) Write(p []byte) (n int, err error) {
-	for _, w := range m.writers {
-		n, err = w.Write(p)
-		if err != nil {
-			return n, err
-		}
-	}
-	return n, nil
-}
-
 var port string
 var url string
 
@@ -41,7 +19,7 @@ func main() {
 	flag.StringVar(&url, "url", "/", "The URL path to serve.")
 	flag.Parse()
 	http.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
-		m := newMultiWriter(os.Stdout, w)
+		m := io.MultiWriter(os.Stdout, w)
 		defer r.Body.Close()
 		b, err := ioutil.ReadAll(r.Body)
 		if err != nil {
