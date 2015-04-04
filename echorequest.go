@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -19,15 +18,14 @@ func main() {
 	http.HandleFunc(*url, func(w http.ResponseWriter, r *http.Request) {
 		m := io.MultiWriter(os.Stdout, w)
 		defer r.Body.Close()
-		b, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
 		log.Println("Received request:")
 		for key, value := range r.Header {
 			fmt.Fprintf(m, "%v : %v\n", key, value)
 		}
-		fmt.Fprintf(m, string(b))
+		_, err := io.Copy(m, r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})
 	err := http.ListenAndServe(*port, nil)
 	if err != nil {
